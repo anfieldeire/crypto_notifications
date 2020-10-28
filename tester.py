@@ -186,6 +186,39 @@ class Crypto:
                 returned_data, title = Crypto.get_portfolio_total(self)
                 coin.print_data(returned_data, title)
 
+    def send_to_excel(self):
+        
+        requested_metrics = ['24h', '7d', '14d', '30d', 'ath', 'subtotals', 'total']
+
+        for i in requested_metrics:
+            if i == '24h':
+                returned_data, title = Crypto.get_price_change24h(self)
+                excel_writer(returned_data, title)
+
+            elif i == '7d':
+                returned_data, title = Crypto.get_price_change7d(self)
+                excel_writer(returned_data, title)
+
+            elif i == '14d':
+                returned_data, title = Crypto.get_price_change14d(self)
+                excel_writer(returned_data, title)
+
+            elif i == '30d':
+                returned_data, title = Crypto.get_price_change30d(self)
+                excel_writer(returned_data, title)
+
+            elif i == 'ath':
+                returned_data, title = Crypto.get_price_ath(self)
+                excel_writer(returned_data, title)
+
+            elif i == 'subtotals':
+                returned_data, title = Crypto.get_portfolio_subtotals(self)
+                excel_writer(returned_data, title)
+
+            elif i == 'totals':
+                returned_data, title = Crypto.get_portfolio_total(self)
+                excel_writer(returned_data, title)
+
 
     def print_data(self, returned_data, title):
         """ Generic printer function that will print metrics to screen """
