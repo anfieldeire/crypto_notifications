@@ -159,12 +159,12 @@ class Crypto:
             if i == '24h':
                 returned_data, title = Crypto.get_price_change24h(self)
                 coin.print_data(returned_data, title)
-                excel_writer(returned_data, title)
+            #    excel_writer(returned_data, title)
 
             elif i == '7d':
                 returned_data, title = Crypto.get_price_change7d(self)
                 coin.print_data(returned_data, title)
-                excel_writer(returned_data, title)
+             #   excel_writer(returned_data, title)
 
             elif i == '14d':
                 returned_data, title = Crypto.get_price_change14d(self)
@@ -187,37 +187,45 @@ class Crypto:
                 coin.print_data(returned_data, title)
 
     def send_to_excel(self):
-        
-        requested_metrics = ['24h', '7d', '14d', '30d', 'ath', 'subtotals', 'total']
+        requested_metrics = ['24h', '7d']
+      #  requested_metrics = ['24h', '7d', '14d', '30d', 'ath', 'subtotals', 'total']
+        j = 0
 
         for i in requested_metrics:
+            j = j + 1
             if i == '24h':
                 returned_data, title = Crypto.get_price_change24h(self)
-                excel_writer(returned_data, title)
+                excel_writer(returned_data, title, j)
 
             elif i == '7d':
+                j = j + 1
                 returned_data, title = Crypto.get_price_change7d(self)
-                excel_writer(returned_data, title)
+                excel_writer(returned_data, title, j)
 
             elif i == '14d':
+                j = j +1
                 returned_data, title = Crypto.get_price_change14d(self)
-                excel_writer(returned_data, title)
+                excel_writer(returned_data, title, j)
 
             elif i == '30d':
+                j = j + 1
                 returned_data, title = Crypto.get_price_change30d(self)
-                excel_writer(returned_data, title)
+                excel_writer(returned_data, title, j)
 
             elif i == 'ath':
+                j = j + 1
                 returned_data, title = Crypto.get_price_ath(self)
-                excel_writer(returned_data, title)
+                excel_writer(returned_data, title, j)
 
             elif i == 'subtotals':
+                j = j + 1
                 returned_data, title = Crypto.get_portfolio_subtotals(self)
-                excel_writer(returned_data, title)
+                excel_writer(returned_data, title, j)
 
             elif i == 'totals':
+                j = j + 1
                 returned_data, title = Crypto.get_portfolio_total(self)
-                excel_writer(returned_data, title)
+                excel_writer(returned_data, title, j)
 
 
     def print_data(self, returned_data, title):
@@ -236,7 +244,8 @@ if __name__ == '__main__':
 
     coin = Crypto(api_url)
     coin.read_config_file()
-    coin.input_metric()
+ #   coin.input_metric()
+    coin.send_to_excel()
 #    excel_writer()
     # coin.get_price_ath()
     # coin.get_portfolio_subtotals()
