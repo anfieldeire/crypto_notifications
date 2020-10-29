@@ -7,11 +7,13 @@ def excel_writer(returned_data, title, j):
 
     workbook = xlsxwriter.Workbook("out.xlsx")
 
-    for i in range(2):
+    for i in range(j):
 
-        worksheet = workbook.add_worksheet(title)
+        worksheet = workbook.add_worksheet()
+        print("Worksheet name: {}".format(title))
 
         print("print from excel writer")
+        print("title {}".format(title))
         worksheet.write("A1", "Symbols")
         worksheet.write("B1", title)
 
@@ -24,7 +26,6 @@ def excel_writer(returned_data, title, j):
                 if key == 'id':
                     worksheet.write(row, col, value)
 
-               # elif key == 'price_change_24h':
                 else:
                     worksheet.write(row, col + 1, value)
 
