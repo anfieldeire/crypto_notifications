@@ -55,7 +55,7 @@ class Crypto:
         return portfolio_amounts
 
     def get_portfolio_data(self):
-        """ Return list of dictionaries for the coin symbols listed in portfolio data keys """
+        """ Return list of dictionaries for only the coin symbols listed in portfolio data keys """
 
         portfolio_amounts = Crypto.read_config_file(self)
         portfolio_data = []
