@@ -55,6 +55,7 @@ class Crypto:
             contents = f.read()
             file_data = ast.literal_eval(contents)
             print(file_data)
+            print(type(file_data))
             for user_list in file_data:
                 user_data = user_list[0]
                 user_porfolio = user_list[1]
@@ -88,36 +89,39 @@ class Crypto:
         """ Return list of dictionaries with coin symbol and all time high price """
         title = "Price ATH (USD)"
         returned_data_ath = []
+#        portfolio_data = Crypto.get_portfolio_data(self)
 
         for each_list in self.portfolio_data:
             user_list = []
             user_data = each_list[0]
+            user_list.append(user_data)
 
             for coin in range(1, len(each_list)):
 
                 user_list.append({'id': each_list[coin]['symbol'], 'ath': each_list[coin]['ath']})
-            user_list = sorted(user_list, key=itemgetter('ath'), reverse=True)
-            user_list.insert(0, user_data)
+                print("user list")
+                print(user_list)
+             #   user_list_new = sorted(user_list[1:], key=itemgetter('ath'), reverse=True)
             returned_data_ath.append(user_list)
-
+        print("returned data ath")
+        print(returned_data_ath, title)
         return returned_data_ath, title
+
+        # returned_data_ath = sorted(returned_data_ath, key=itemgetter('ath'), reverse=True)
+        # return returned_data_ath, title
 
     def get_price_change24h(self):
         """ Return list of dictionaries with coin symbol and percentage price change 24H """
         returned_data_price_change24h = []
         title = "% Price Change 24H"
 
-        for each_list in self.portfolio_data:
-            user_list = []
-            user_data = each_list[0]
+        for coin in self.portfolio_data:
+            returned_data_price_change24h.append(
+                {'id': coin['symbol'], 'price_change_24h': round(coin['price_change_percentage_24h'], 2)})
 
-            for coin in range(1, len(each_list)):
-
-                user_list.append({'id': each_list[coin]['symbol'], 'price_change_24h': each_list[coin]['price_change_percentage_24h']})
-            user_list = sorted(user_list, key=itemgetter('price_change_24h'), reverse=True)
-            user_list.insert(0, user_data)
-            returned_data_price_change24h.append(user_list)
-
+        returned_data_price_change24h = sorted(returned_data_price_change24h, key=itemgetter('price_change_24h'),
+                                               reverse=True)
+        print(returned_data_price_change24h, title)
         return returned_data_price_change24h, title
 
     def get_price_change7d(self):
@@ -125,18 +129,13 @@ class Crypto:
         returned_data_price_change7d = []
         title = '% Price Change 7D'
 
-        for each_list in self.portfolio_data:
-            user_list = []
-            user_data = each_list[0]
+        for coin in self.portfolio_data:
+            returned_data_price_change7d.append({'id': coin['symbol'], 'price_change_perc_7d': round(
+                coin['price_change_percentage_7d_in_currency'], 2)})
 
-            for coin in range(1, len(each_list)):
-                user_list.append({'id': each_list[coin]['symbol'],
-                                  'price_change_perc_7d': round(each_list[coin]
-                                                                ['price_change_percentage_7d_in_currency'], 2)})
-            user_list = sorted(user_list, key=itemgetter('price_change_perc_7d'), reverse=True)
-            user_list.insert(0, user_data)
-            returned_data_price_change7d.append(user_list)
-
+        returned_data_price_change7d = sorted(returned_data_price_change7d, key=itemgetter('price_change_perc_7d'),
+                                              reverse=True)
+        print(returned_data_price_change7d, title)
         return returned_data_price_change7d, title
 
     def get_price_change14d(self):
@@ -144,18 +143,11 @@ class Crypto:
         returned_data_price_change14d = []
         title = '% Price Change 14D'
 
-        for each_list in self.portfolio_data:
-            user_list = []
-            user_data = each_list[0]
+        for coin in self.portfolio_data:
+            returned_data_price_change14d.append({'id': coin['symbol'], 'price_change_perc_14d': round(
+                coin['price_change_percentage_14d_in_currency'], 2)})
 
-            for coin in range(1, len(each_list)):
-                user_list.append({'id': each_list[coin]['symbol'],
-                                  'price_change_perc_14d': round(each_list[coin]
-                                                                 ['price_change_percentage_14d_in_currency'],2) })
-            user_list = sorted(user_list, key=itemgetter('price_change_perc_14d'), reverse=True)
-            user_list.insert(0, user_data)
-            returned_data_price_change14d.append(user_list)
-
+        returned_data_price_change14d = sorted(returned_data_price_change14d, key=itemgetter('price_change_perc_14d'), reverse=True)
         return returned_data_price_change14d, title
 
     def get_price_change30d(self):
@@ -163,18 +155,12 @@ class Crypto:
         returned_data_price_change30d = []
         title = '% Price Change 30D'
 
-        for each_list in self.portfolio_data:
-            user_list = []
-            user_data = each_list[0]
+        for coin in self.portfolio_data:
+            returned_data_price_change30d.append({'id': coin['symbol'], 'price_change_perc_30d': round(
+                coin['price_change_percentage_30d_in_currency'], 2)})
 
-            for coin in range(1, len(each_list)):
-                user_list.append({'id': each_list[coin]['symbol'],
-                                  'price_change_perc_30d': round(each_list[coin]
-                                                                 ['price_change_percentage_30d_in_currency'],2) })
-            user_list = sorted(user_list, key=itemgetter('price_change_perc_30d'), reverse=True)
-            user_list.insert(0, user_data)
-            returned_data_price_change30d.append(user_list)
-
+        returned_data_price_change30d = sorted(returned_data_price_change30d, key=itemgetter('price_change_perc_30d'),
+                                               reverse=True)
         return returned_data_price_change30d, title
 
     def get_portfolio_subtotals(self):
@@ -182,46 +168,19 @@ class Crypto:
         returned_coin_subtotals = []
         title = 'Portfolio Subtotals (USD)'
 
-        for each_list in self.portfolio_data:
-            for coin in each_list[1:]:
-                symbol = coin['symbol']
-                current_price = coin['current_price']
-              #   print("symbol 1{} ".format(symbol))
-              #   print("Current price 1 {} ".format(current_price))
-                returned_coin_subtotals = []
-                for a_list in self.portfolio_amounts:
+        for coin in self.portfolio_data:
+            symbol = coin['symbol']
+            current_price = coin['current_price']
 
-
-                    for each_dict in a_list[1:]:
-                        print("each dict")
-                        print(each_dict)
-                    for key, value in each_dict.items():
-                        if coin['symbol'] == key:
-                            print("match")
-                            print(coin['symbol'])
-                            print("Value {} ".format(value))
-                            print("Current Price {} ".format(current_price))
-                            coin_subtotal = (value * current_price)
-                            print("Coin subtotal {}".format(coin_subtotal))
-
-                            returned_coin_subtotals.append(coin_subtotal)
-                            print("Returned Coin subtotals {} ".format(returned_coin_subtotals))
-        print("Coin Subtotals ALL{} ".format(returned_coin_subtotals))
-
-
-        # for coin in self.portfolio_data:
-        #     symbol = coin['symbol']
-        #     current_price = coin['current_price']
-        #
-        # for key, value in self.portfolio_amounts.items():
-        #     for y in self.portfolio_data:
-        #         if y['symbol'] == key:
-        #             # print(y['symbol'])
-        #             coin_subtotal = round(value * y['current_price'], 2)
-        #             returned_coin_subtotals.append({'id': y['symbol'], 'coin_subtotal': coin_subtotal})
+        for key, value in self.portfolio_amounts.items():
+            for y in self.portfolio_data:
+                if y['symbol'] == key:
+                    # print(y['symbol'])
+                    coin_subtotal = round(value * y['current_price'], 2)
+                    returned_coin_subtotals.append({'id': y['symbol'], 'coin_subtotal': coin_subtotal})
         # print("coin subtotals")
         # print(returned_coin_subtotals)
-       # return returned_coin_subtotals, title
+        return returned_coin_subtotals, title
 
     def get_portfolio_total(self):
         portfolio_subtotals = Crypto.get_portfolio_subtotals(self)
@@ -235,7 +194,7 @@ class Crypto:
 
     def input_metric(self):
         """ The list defined here in requested metrics, will serve as input to the printer function"""
-        requested_metrics = ['24h']
+        requested_metrics = ['24h', '7d']
       #  requested_metrics = ['24h', '7d', '14d', '30d', 'ath', 'subtotals', 'total']
         returned_data_price_change = []
         for i in requested_metrics:
@@ -259,8 +218,6 @@ class Crypto:
 
             elif i == 'ath':
                 returned_data, title = Crypto.get_price_ath(self)
-                # print("returned data , title")
-                # print(returned_data, title)
                 coin.print_data(returned_data, title)
 
             elif i == 'subtotals':
@@ -317,39 +274,24 @@ class Crypto:
 
     def print_data(self, returned_data, title):
         """ Generic printer function that will print metrics to screen """
-        print('\n{}'.format(title))
-
-        for a_list in returned_data:
-            for a_dict in a_list:
-
-                for key, value in a_dict.items():
-                    if key == 'name':
-                        print("\nPortfolio info for {}\n".format(a_dict['name']))
-                    elif key == 'id':
-                        print("Symbol: {}".format(a_dict['id']), end="" ', ' )
-                    elif key != 'phone':
-                        print(value)
-
-        # for dict in returned_data:
-        #     for key, value in dict.items():
-        #         if key == 'id':
-        #             print("Symbol: {}".format(dict['id']), end="")
-        #         else:
-        #             print(", {}".format(value))
+        print('\n{}\n'.format(title))
+       # print("\nPercentage Price Change, {} Descending\n".format(i))
+        for dict in returned_data:
+            for key, value in dict.items():
+                if key == 'id':
+                    print("Symbol: {}".format(dict['id']), end="")
+                else:
+                    print(", {}".format(value))
 
 
 if __name__ == '__main__':
 
     coin = Crypto(api_url)
     coin.get_portfolio_data()
-#    coin.get_price_ath()
-#    coin.get_price_change24h()
+    coin.get_price_ath()
 #    coin.read_config_file()
- #   coin.input_metric()
- #   coin.get_price_change7d()
- #   coin.get_price_change14d()
- #   coin.get_price_change30d()
+#    coin.input_metric()
   #  coin.send_to_excel()
 #    excel_writer()
     # coin.get_price_ath()
-    coin.get_portfolio_subtotals()
+    # coin.get_portfolio_subtotals()

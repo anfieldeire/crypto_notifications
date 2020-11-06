@@ -29,8 +29,8 @@ class Crypto:
         portfolio_amounts = Crypto.read_config_file(self)
 
         self.portfolio_amounts = portfolio_amounts
-        print("from init print portfolio amounts")
-        print(self.portfolio_amounts)
+        # print("from init print portfolio amounts")
+        # print(self.portfolio_amounts)
 
     def connection(self):
         """ Connect to the coin gecko api and return data for all coins """
@@ -41,7 +41,7 @@ class Crypto:
             print("API not available - try again later")
         else:
             data = json.loads(response.text)
-            print(data)
+            # print(data)
             return data
 
 #            Crypto.get_portfolio_data(self, data)
@@ -55,7 +55,7 @@ class Crypto:
         return portfolio_amounts
 
     def get_portfolio_data(self):
-        """ Return list of dictionaries for only the coin symbols listed in portfolio data keys """
+        """ Return list of dictionaries for the coin symbols listed in portfolio data keys """
 
         portfolio_amounts = Crypto.read_config_file(self)
         portfolio_data = []
@@ -63,7 +63,8 @@ class Crypto:
         for coin in self.data:
             if coin['symbol'] in portfolio_amounts:
                 portfolio_data.append(coin)
-
+        print("portfolio data")
+        print(portfolio_data)
         return portfolio_data
 
     def get_current_price(self):
@@ -96,12 +97,13 @@ class Crypto:
                                                reverse=True)
 
         print("\nPercentage Price Change, 24H Descending\n")
-        for dict in returned_data_price_change24h:
-            for key, value in dict.items():
-                if key == 'id':
-                    print("Symbol: {}".format(dict['id']), end="")
-                else:
-                    print(", {}%".format(dict['price_change_24h']))
+        print(returned_data_price_change24h)
+        # for dict in returned_data_price_change24h:
+        #     for key, value in dict.items():
+        #         if key == 'id':
+        #             print("Symbol: {}".format(dict['id']), end="")
+        #         else:
+        #             print(", {}%".format(dict['price_change_24h']))
 
     def get_price_change7d(self):
         """ Return list of dictionaries with coin symbol and percentage price change 7D """
@@ -184,12 +186,13 @@ class Crypto:
 if __name__ == '__main__':
     coin = Crypto(api_url)
     coin.read_config_file()
-    coin.get_current_price()
+  #  coin.
+    # coin.get_current_price()
     coin.get_price_change24h()
-    coin.get_price_change7d()
-    coin.get_price_change14d()
-    coin.get_price_change30d()
-    coin.portfolio_subtotals()
+    # coin.get_price_change7d()
+    # coin.get_price_change14d()
+    # coin.get_price_change30d()
+    # coin.portfolio_subtotals()
 
     # data = Crypto.connection(coin)
     # if data is not None:
