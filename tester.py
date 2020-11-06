@@ -3,7 +3,7 @@ import json
 from operator import itemgetter
 import ast
 
-from excel_writer import excel_writer
+#from excel_writer import excel_writer
 
 # global - price, market cap, volume
 # cryptobot - username - crypto_alerts27_bot
@@ -47,7 +47,7 @@ class Crypto:
 
     def read_config_file(self):
         """ Read configuration file into a dictionary with crypto symbols and amounts """
-        with open('..\portfolio.txt') as f:
+        with open('portfolio.txt') as f:
 
             allusers_portfolio = []
 
@@ -182,31 +182,42 @@ class Crypto:
         returned_coin_subtotals = []
         title = 'Portfolio Subtotals (USD)'
 
-        for each_list in self.portfolio_data:
-            for coin in each_list[1:]:
-                symbol = coin['symbol']
-                current_price = coin['current_price']
-              #   print("symbol 1{} ".format(symbol))
-              #   print("Current price 1 {} ".format(current_price))
-                returned_coin_subtotals = []
-                for a_list in self.portfolio_amounts:
+        for a_list in self.portfolio_amounts:
+
+            returned_coin_subtotals = []
+            for each_dict in a_list[1:]:
+                print("each dict")
+                print(each_dict)
+
+            for key, value in each_dict.items():
+                coin_amount = value
+                print("Coin amount {} ".format(coin_amount))
 
 
-                    for each_dict in a_list[1:]:
-                        print("each dict")
-                        print(each_dict)
-                    for key, value in each_dict.items():
-                        if coin['symbol'] == key:
-                            print("match")
-                            print(coin['symbol'])
-                            print("Value {} ".format(value))
-                            print("Current Price {} ".format(current_price))
-                            coin_subtotal = (value * current_price)
-                            print("Coin subtotal {}".format(coin_subtotal))
+            for each_list in self.portfolio_data:
+                for the_dict in each_list[1:]:
+                    print("The dict {} ".format(the_dict))
 
-                            returned_coin_subtotals.append(coin_subtotal)
-                            print("Returned Coin subtotals {} ".format(returned_coin_subtotals))
-        print("Coin Subtotals ALL{} ".format(returned_coin_subtotals))
+                    if the_dict['symbol'] == key:
+                        print(the_dict['symbol'])
+
+                # for each_dict in each_list[1:]:
+                #     print (each_dict['id'])
+                # print(each_list(each_dict['id']))
+                # if each_list['symbol'] == key:
+                #     print("Match coin")
+                #     print(coin)
+
+                    # if coin['symbol'] == key:
+                    #     print("match")
+                    #     print(key)
+                    #     print("coin value {}".format(coin_amount))
+
+                            # if coin['symbol'] == key:
+                            #     print("match")
+                            #     print(key)
+                            #     print("coin value {}".format(coin_amount))
+
 
 
         # for coin in self.portfolio_data:
