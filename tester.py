@@ -175,36 +175,48 @@ class Crypto:
     def get_current_price(self):
         """ Return Subtotal amounts for each coin in portfolio based on amount multiple by current price per coin """
         returned_coin_subtotals = []
-        title = 'Portfolio Subtotals (USD)'
+        returned_coins = []
+        title = 'Portfolio Current Prices (USD)'
 
+        user_list_number = 0
         for each_list in self.portfolio_data:
             user_list = []
+            user_coin = []
+
             user_data = each_list[0]
 
             for coin in range(1, len(each_list)):
-                # user_list.append({'id': each_list[coin]['symbol'],
-             #                     'current_price': round(each_list[coin]
-              #                                           ['current_price'], 2)})
+                print("coin {}".format(coin))
+                user_list.append({'id': each_list[coin]['symbol'], 'current_price': round(each_list[coin]
+                                            ['current_price'], 2)})
 
-                for the_lists in self.portfolio_amounts:
+                print("user list + number {}".format(user_list_number))
+                print("user list {}".format(user_list))
+                coin_amounts = [[[(key, value) for key, value in the_dict.items() if key == each_list[coin]['symbol']] for the_dict in the_lists[1:]] for the_lists in self.portfolio_amounts]
 
+                print("coin amounts")
+                print(coin_amounts)
+                print("Coin amounts # {}".format(coin_amounts[user_list_number]))
+                coin_amount = coin_amounts[user_list_number][0][0][1]
+                print("Coin amount {}".format(coin_amount))
+                coin_price = each_list[coin]['current_price']
+                print("Coin price {}".format(coin_price))
+                coin_subtotal = coin_price * coin_amount
+                print("Coin subtotal {}".format(coin_subtotal))
+                user_coin.append({'id': each_list[coin]['symbol'], 'coin_subtotal': coin_subtotal})
 
-                    for the_dicts in the_lists[1:]:
+              #  user_list[user_list_number][user_list_number] =
 
-                        user_coin = []
-                        for key, value in the_dicts.items():
-                            if each_list[coin]['symbol'] == key:
-                                print("Key {}, value: {}".format(key, value))
-                                print("Coin subtotal {}".format(each_list[coin]['current_price'] * value))
-                                coin_subtotal = (each_list[coin]['current_price'] * value)
-                                user_coin.append({'id': key, 'coin_subtotal': coin_subtotal})
-                    print(user_coin)
-
-       #     user_list = sorted(user_list, key=itemgetter('current_price'), reverse=True)
+            user_list_number = user_list_number + 1
             user_list.insert(0, user_data)
             returned_coin_subtotals.append(user_list)
+
+            user_coin.insert(0, user_data)
+            returned_coins.append(user_coin)
         print("returned coin subtotals")
         print(returned_coin_subtotals)
+        print("Returned coins1")
+        print(returned_coins) 
 
 
 
