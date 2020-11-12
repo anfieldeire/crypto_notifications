@@ -3,7 +3,7 @@ import json
 from operator import itemgetter
 import ast
 
-#from excel_writer import excel_writer
+from excel_writer import excel_writer
 
 # global - price, market cap, volume
 # cryptobot - username - crypto_alerts27_bot
@@ -23,16 +23,17 @@ class Crypto:
         data = Crypto.connection(self)
         self.data = data
 
-        portfolio_amounts = Crypto.read_config_file(self)
-        self.portfolio_amounts = portfolio_amounts
+        self.portfolio_amounts = Crypto.read_config_file(self)
 
         print("portfolio amounts")
         print(self.portfolio_amounts)
 
-        portfolio_data = Crypto.get_portfolio_data(self)
-        self.portfolio_data = portfolio_data
+        self.portfolio_data = Crypto.get_portfolio_data(self)
         print("self portfolio data")
         print(self.portfolio_data)
+
+        self.portfolio_subtotals = Crypto.get_portfolio_subtotals(self)
+
 
     def connection(self):
         """ Connect to the coin gecko api and return data for all coins """
@@ -46,7 +47,7 @@ class Crypto:
             return data
 
     def read_config_file(self):
-        """ Read configuration file into a dictionary with crypto symbols and amounts """
+        """ Read configuration file into a list of dictionaries with crypto symbols and amounts """
         with open('..\portfolio.txt') as f:
 
             allusers_portfolio = []
@@ -113,6 +114,8 @@ class Crypto:
             user_list.insert(0, user_data)
             returned_data_price_change24h.append(user_list)
 
+        print("Title {} ".format(title))
+        print(returned_data_price_change24h)
         return returned_data_price_change24h, title
 
     def get_price_change7d(self):
@@ -172,170 +175,91 @@ class Crypto:
 
         return returned_data_price_change30d, title
 
-    def get_current_price(self):
-        """ Return Subtotal amounts for each coin in portfolio based on amount multiple by current price per coin """
-        returned_coin_subtotals = []
-        returned_coins = []
-        title = 'Portfolio Current Prices (USD)'
+    def get_portfolio_subtotals(self):
+        """ Return Subtotal amounts for each coin in each users portfolio based on amount multiplied by current price
+         per coin """
+        title = 'Portfolio Subtotals For Each Coin (USD)'
 
+        coin_subtotals = []
         user_list_number = 0
-        for each_list in self.portfolio_data:
-            user_list = []
-            user_coin = []
 
+        for each_list in self.portfolio_data:
+            user_coin = []
             user_data = each_list[0]
 
             for coin in range(1, len(each_list)):
-                print("coin {}".format(coin))
-                user_list.append({'id': each_list[coin]['symbol'], 'current_price': round(each_list[coin]
-                                            ['current_price'], 2)})
 
-                print("user list + number {}".format(user_list_number))
-                print("user list {}".format(user_list))
-                coin_amounts = [[[(key, value) for key, value in the_dict.items() if key == each_list[coin]['symbol']] for the_dict in the_lists[1:]] for the_lists in self.portfolio_amounts]
-
-                print("coin amounts")
-                print(coin_amounts)
-                print("Coin amounts # {}".format(coin_amounts[user_list_number]))
+                coin_amounts = [[[(key, value) for key, value in the_dict.items() if key == each_list[coin]['symbol']]
+                                 for the_dict in the_lists[1:]] for the_lists in self.portfolio_amounts]
                 coin_amount = coin_amounts[user_list_number][0][0][1]
-                print("Coin amount {}".format(coin_amount))
                 coin_price = each_list[coin]['current_price']
-                print("Coin price {}".format(coin_price))
                 coin_subtotal = coin_price * coin_amount
-                print("Coin subtotal {}".format(coin_subtotal))
                 user_coin.append({'id': each_list[coin]['symbol'], 'coin_subtotal': coin_subtotal})
 
-              #  user_list[user_list_number][user_list_number] =
-
             user_list_number = user_list_number + 1
-            user_list.insert(0, user_data)
-            returned_coin_subtotals.append(user_list)
-
             user_coin.insert(0, user_data)
-            returned_coins.append(user_coin)
-        print("returned coin subtotals")
-        print(returned_coin_subtotals)
-        print("Returned coins1")
-        print(returned_coins) 
+            coin_subtotals.append(user_coin)
 
-
-
-    def get_portfolio_subtotals(self):
-        """ Return Subtotal amounts for each coin in portfolio based on amount multiple by current price per coin """
-        returned_coin_subtotals = []
-        title = 'Portfolio Subtotals (USD)'
-
-        for each_list in self.portfolio_amounts:
-            user_list = []
-            user_data = each_list[0]
-            user_subtotals = []
-
-            for each_dict in each_list[1:]:
-
-                for key, value in each_dict.items():
-                    coin_amount = value
-                    print(coin_amount)
-
-                    for each_list in self.portfolio_data:
-                        user_list = []
-                        user_data = each_list[0]
-
-                        for a_dict in range(1, len(each_list)):
-                            for one_dict in a_dict:
-                                print("each coin")
-                                print(one_dict)
-
+        return coin_subtotals, title
 
     def get_portfolio_total(self):
-        portfolio_subtotals = Crypto.get_portfolio_subtotals(self)
-        portfolio_total = 0
+        """ Get Portfolio total value for each user. Input is portfolio subtotals of each crypto coin
+        Output is a list of dicts for each user. First one with user info, second one with the portfolio total"""
+
         title = 'Portfolio Total (USD)'
 
-        for coin in portfolio_subtotals:
-            portfolio_total = round(portfolio_total + coin['coin_subtotal'], 2)
-        print("Portfolio Total $ {}".format(portfolio_total))
-        return portfolio_total, title
+        portfolio_subtotals = self.portfolio_subtotals[0]
+        all_users_totals = []
+
+        for each_list in portfolio_subtotals:
+
+            user_portfolio_total = 0
+            each_user = []
+
+            for each_dict in each_list[1:]:
+                user_data = each_list[0]
+                user_portfolio_total = user_portfolio_total + each_dict['coin_subtotal']
+            each_user.append({'portfolio_total': user_portfolio_total})
+            each_user.insert(0, user_data)
+
+            all_users_totals.append(each_user)
+        return all_users_totals, title
 
     def input_metric(self):
         """ The list defined here in requested metrics, will serve as input to the printer function"""
         requested_metrics = ['24h']
-      #  requested_metrics = ['24h', '7d', '14d', '30d', 'ath', 'subtotals', 'total']
+
         returned_data_price_change = []
         for i in requested_metrics:
             if i == '24h':
                 returned_data, title = Crypto.get_price_change24h(self)
                 coin.print_data(returned_data, title)
-            #    excel_writer(returned_data, title)
+                excel_writer(returned_data, title)
 
             elif i == '7d':
                 returned_data, title = Crypto.get_price_change7d(self)
-                coin.print_data(returned_data, title)
-             #   excel_writer(returned_data, title)
+           #     coin.print_data(returned_data, title)
+           #     excel_writer(returned_data, title)
 
             elif i == '14d':
                 returned_data, title = Crypto.get_price_change14d(self)
-                coin.print_data(returned_data, title)
+            #    coin.print_data(returned_data, title)
 
             elif i == '30d':
                 returned_data, title = Crypto.get_price_change30d(self)
-                coin.print_data(returned_data, title)
+            #    coin.print_data(returned_data, title)
 
             elif i == 'ath':
                 returned_data, title = Crypto.get_price_ath(self)
-                # print("returned data , title")
-                # print(returned_data, title)
-                coin.print_data(returned_data, title)
+             #   coin.print_data(returned_data, title)
 
             elif i == 'subtotals':
                 returned_data, title = Crypto.get_portfolio_subtotals(self)
-                coin.print_data(returned_data, title)
+             #   coin.print_data(returned_data, title)
 
             elif i == 'totals':
                 returned_data, title = Crypto.get_portfolio_total(self)
-                coin.print_data(returned_data, title)
-
-    def send_to_excel(self):
-        requested_metrics = ['7d', '14d']
-
-        j = 0
-
-        for i in requested_metrics:
-
-            if i == '24h':
-
-                j = j + 1
-                returned_data, title = Crypto.get_price_change24h(self)
-                excel_writer(returned_data, title, j)
-
-            elif i == '7d':
-                j = j + 1
-                returned_data, title = Crypto.get_price_change7d(self)
-                excel_writer(returned_data, title, j)
-
-            elif i == '14d':
-                j = j +1
-                returned_data, title = Crypto.get_price_change14d(self)
-                excel_writer(returned_data, title, j)
-
-            elif i == '30d':
-                j = j + 1
-                returned_data, title = Crypto.get_price_change30d(self)
-                excel_writer(returned_data, title, j)
-
-            elif i == 'ath':
-                j = j + 1
-                returned_data, title = Crypto.get_price_ath(self)
-                excel_writer(returned_data, title, j)
-
-            elif i == 'subtotals':
-                j = j + 1
-                returned_data, title = Crypto.get_portfolio_subtotals(self)
-                excel_writer(returned_data, title, j)
-
-            elif i == 'totals':
-                j = j + 1
-                returned_data, title = Crypto.get_portfolio_total(self)
-                excel_writer(returned_data, title, j)
+             #   coin.print_data(returned_data, title)
 
 
     def print_data(self, returned_data, title):
@@ -353,27 +277,9 @@ class Crypto:
                     elif key != 'phone':
                         print(value)
 
-        # for dict in returned_data:
-        #     for key, value in dict.items():
-        #         if key == 'id':
-        #             print("Symbol: {}".format(dict['id']), end="")
-        #         else:
-        #             print(", {}".format(value))
-
-
 if __name__ == '__main__':
 
     coin = Crypto(api_url)
     coin.get_portfolio_data()
-    coin.get_current_price()
-#    coin.get_price_ath()
-#    coin.get_price_change24h()
-#    coin.read_config_file()
- #   coin.input_metric()
- #   coin.get_price_change7d()
- #   coin.get_price_change14d()
- #   coin.get_price_change30d()
-  #  coin.send_to_excel()
-#    excel_writer()
-    # coin.get_price_ath()
- #   coin.get_portfolio_subtotals()
+    coin.get_portfolio_total()
+    coin.input_metric()
