@@ -20,8 +20,9 @@ class Crypto:
     def __init__(self, api_url):
 
         self.api = api_url
-        data = Crypto.connection(self)
-        self.data = data
+        self.data = Crypto.connection(self)
+        print("self data")
+      #  print(self.data)
 
         self.portfolio_amounts = Crypto.read_config_file(self)
 
@@ -31,6 +32,7 @@ class Crypto:
         self.portfolio_data = Crypto.get_portfolio_data(self)
         print("self portfolio data")
         print(self.portfolio_data)
+
 
         self.portfolio_subtotals = Crypto.get_portfolio_subtotals(self)
 
@@ -175,6 +177,29 @@ class Crypto:
 
         return returned_data_price_change30d, title
 
+    def get_current_price(self):
+        """ Return Subtotal amounts for each coin in portfolio based on amount multiple by current price per coin """
+        title = 'Portfolio Current Prices (USD)'
+        current_price = []
+
+
+        user_list_number = 0
+        for each_list in self.portfolio_data:
+            user_list = []
+            user_coin = []
+
+            user_data = each_list[0]
+
+            for coin in range(1, len(each_list)):
+
+                user_list.append({'id': each_list[coin]['symbol'], 'current_price': round(each_list[coin]
+                                                                                          ['current_price'], 2)})
+            user_list.insert(0, user_data)
+            current_price.append(user_list)
+        print("Current Price")
+        print(current_price)
+
+
     def get_portfolio_subtotals(self):
         """ Return Subtotal amounts for each coin in each users portfolio based on amount multiplied by current price
          per coin """
@@ -227,7 +252,7 @@ class Crypto:
 
     def input_metric(self):
         """ The list defined here in requested metrics, will serve as input to the printer function"""
-        requested_metrics = ['24h']
+        requested_metrics = ['24h', '7d']
 
         returned_data_price_change = []
         for i in requested_metrics:
@@ -281,5 +306,6 @@ if __name__ == '__main__':
 
     coin = Crypto(api_url)
     coin.get_portfolio_data()
-    coin.get_portfolio_total()
+    coin.get_current_price()
+#    coin.get_portfolio_total()
     coin.input_metric()
