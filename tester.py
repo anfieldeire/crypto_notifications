@@ -2,6 +2,7 @@ import requests
 import json
 from operator import itemgetter
 import ast
+from twilio_message import message_config
 
 from excel_writer import excel_writer
 
@@ -22,21 +23,26 @@ class Crypto:
         self.api = api_url
         self.data = Crypto.connection(self)
         self.portfolio_amounts = Crypto.read_config_file(self)
-
-        print("portfolio amounts")
-        print(self.portfolio_amounts)
-
         self.portfolio_data = Crypto.get_portfolio_data(self)
-        # print("self portfolio data")
-        # print(self.portfolio_data)
-
         self.coin_metrics = Crypto.get_coin_metrics(self)
         print("self. coin metrics")
         print(self.coin_metrics)
-
         self.portfolio_totals = Crypto.get_portfolio_total(self)
-        print("portfolio totals")
-        print(self.portfolio_totals)
+        # print("portfolio totals")
+        # print(self.portfolio_totals)
+        self.portfolio_percentages = Crypto.find_percentage(self)
+        print("find percentage")
+        print(self.portfolio_percentages)
+        print(len(self.portfolio_percentages))
+#        self.message_data = message_config(self)
+        # print()
+        # if self.messa
+
+        # print("self message data")
+        # print(self.message_data)
+
+        if len(self.portfolio_percentages) > 0:
+            message_config(self.portfolio_percentages)
 
 
     def connection(self):
@@ -54,9 +60,9 @@ class Crypto:
         with open('..\portfolio.txt') as f:
 
             allusers_portfolio = []
-
             contents = f.read()
             file_data = ast.literal_eval(contents)
+
             for user_list in file_data:
                 user_data = user_list[0]
                 user_porfolio = user_list[1]
@@ -68,21 +74,21 @@ class Crypto:
         """ Return list of dictionaries for the coin symbols listed in portfolio data keys """
 
         portfolio_data = []
-        # print("Inside retrieve data func")
 
         for each_list in self.portfolio_amounts:
             user_portfolio = [each_list[0]]
 
             for coin in self.data:
-                if coin['symbol'] in each_list[1]:
 
+                if coin['symbol'] in each_list[1]:
                     user_portfolio.append(coin)
 
             portfolio_data.append(user_portfolio)
         return portfolio_data
 
     def get_coin_metrics(self):
-        """ Get select metrics for each user for each coin in their portfolio """
+        """ Get metrics for each user for each coin in their portfolio. Return a nested list,
+        For each user: one list, inside that are 2 dicts, 1st: user data, 2nd: coin metrics for that users coins """
         title = 'All Coin Metrics Per User'
         coin_metrics = []
         user_list_number = 0
@@ -113,8 +119,6 @@ class Crypto:
             user_list_number = user_list_number + 1
             user_list.insert(0, user_data)
             coin_metrics.append(user_list)
-     #   print("Coin metrics")
-     #   print(coin_metrics, title)
         return coin_metrics, title
 
     def get_portfolio_total(self):
@@ -155,53 +159,47 @@ class Crypto:
 
             for each_dict in each_list[1:]:
                 price_change_24h = each_dict['price_change_24h']
-                price_change_24h = str(price_change_24h)
-                first_char = price_change_24h[0]
-                print(price_change_24h)
                 price_change_24h = float(price_change_24h)
-                print("first char minus {}, {}".format(price_change_24h, type(price_change_24h)))
                 price_24h_ago = (100 + price_change_24h)
-                print("price 24h ago {}".format(price_24h_ago))
-                print("ID: {},current price: {},price % 24h ago {}".format(each_dict['id'], each_dict['current_price'], price_24h_ago))
 
                 if price_24h_ago < 100:
-                    coinsubtotal_24h_ago = (each_dict['current_price'] / 100) * price_24h_ago
-                    print("Price 24 ago {}".format(coinsubtotal_24h_ago))
-                    user_list.append({'id': each_dict['id'], 'price_24h_ago': coinsubtotal_24h_ago})
-                else:
-                    coinsubtotal_24h_ago = (each_dict['current_price'] / price_24h_ago) * 100
-                    user_list.append({'id': each_dict['id'], 'price_24h_ago': coinsubtotal_24h_ago})
+                    coinprice_24h_ago = (each_dict['current_price'] / 100) * price_24h_ago
+                    coinsubtotal_24hago = (each_dict['coin_subtotal'] / 100 * price_24h_ago)
+                    percentage_diff = user_data['alert_percentage'] + price_change_24h
+                    price_change_24h_adj = str(price_change_24h)
+                    price_change_24h_adj = price_change_24h_adj[1:]
+                    price_change_24h_adj = float(price_change_24h_adj)
+                    trigger_alert = user_data['alert_percentage'] < price_change_24h_adj
 
+                    if trigger_alert:
+                        user_list.append(
+                            {'id': each_dict['id'], 'price_24h_ago': coinprice_24h_ago, 'price_change_24':
+                                price_change_24h, 'current_price': each_dict['current_price'], 'coinsubtotal_24hago':
+                                coinsubtotal_24hago, 'coinsubtotal_now' :each_dict['coin_subtotal'],
+                             'alert': trigger_alert, 'direction': 'down'})
+
+                else:
+                    coinprice_24h_ago = (each_dict['current_price'] / price_24h_ago) * 100
+                    percentage_diff = user_data['alert_percentage'] - price_change_24h
+                    coinsubtotal_24hago = (each_dict['coin_subtotal'] / price_24h_ago * 100)
+                    trigger_alert = user_data['alert_percentage'] < price_change_24h
+
+                    if trigger_alert:
+                        user_list.append(
+                            {'id': each_dict['id'], 'price_24h_ago': coinprice_24h_ago, 'price_change_24':
+                                price_change_24h, 'current_price': each_dict['current_price'], 'coinsubtotal_24hago':
+                                coinsubtotal_24hago, 'coinsubtotal_now' :each_dict['coin_subtotal'],
+                             'alert': trigger_alert,'direction': 'up'})
+
+        if user_list:
             user_list.insert(0, user_data)
             returned_list.append(user_list)
-        print(returned_list)
+        return returned_list
 
-
-
-
-    def input_metric(self):
-        """ The list defined here in requested metrics, will serve as input to the printer function"""
-        requested_metrics = ['24h']
-
-        returned_data_price_change = []
-
-
-
-
-    def print_data(self, returned_data, title):
-        """ Generic printer function that will print metrics to screen """
-        print('\n{}'.format(title))
-
-        for a_list in returned_data:
-            for a_dict in a_list:
-
-                for key, value in a_dict.items():
-                    if key == 'name':
-                        print("\nPortfolio info for {}\n".format(a_dict['name']))
-                    elif key == 'id':
-                        print("Symbol: {}".format(a_dict['id']), end="" ', ' )
-                    elif key != 'phone':
-                        print(value)
+    # def call_message(self):
+    #  #   message_config(self.portfolio_percentages)
+    #    if self.portfolio_percentages > 0:
+    #    print("inside call message")
 
 if __name__ == '__main__':
 
@@ -210,5 +208,5 @@ if __name__ == '__main__':
 #    coin.get_current_price()
     coin.get_coin_metrics()
 #    coin.get_portfolio_total()
-    coin.input_metric()
     coin.find_percentage()
+#    coin.call_message()
