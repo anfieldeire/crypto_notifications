@@ -1,4 +1,4 @@
-# crypto_notifications
+## Title: Cryptocurreny API Notification Program
 ## Summary: Program that connects to Coingecko API to get crypto data and send notifications based on alert thresholds
 
 * Input: Text file containing cryptocurrency porfolito data for users with the coin symbol and the amount held.
