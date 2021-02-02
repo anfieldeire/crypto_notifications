@@ -11,7 +11,6 @@
   * Percentage Price Change 30D
   * Price ATH
   * Portfolio Totals and Subtotals for each user
-* Output: The program alerts the user via Twilio sms if any coin breached their alert percentage. It will show the subtotal in USD held of that coin.
 * Run instructions: 
      *  Install your virtual environment
      *  Install the requirements.txt file by running
@@ -19,5 +18,5 @@
      *  Create a twilio account with a phone number. Use that number as the from number in the twilio_message.py file
      *  Add the environment variables to your system before running the program - TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
 * Tested: This was tested in a windows virtual environment. Python version 3.6     
-  
+* Output: The program alerts the user via Twilio sms if any coin breached their alert percentage. It will show the subtotal in USD held of that coin.  
   
