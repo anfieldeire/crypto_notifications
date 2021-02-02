@@ -10,7 +10,6 @@ Program that connects to Coingecko API to get crypto data and send notifications
   * Percentage Price Change 30D
   * Price ATH
   * Portfolio Totals and Subtotals for each user
-* Prints Data to Excel
-* Send notifications to users based on price change margin configured via Twilio
+* Sends sms notifications to users based on price change percentage specified, sent via Twilio
   
   
