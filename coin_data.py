@@ -180,10 +180,6 @@ class Crypto:
 
         return returned_list
 
-    # def call_message(self):
-    #  #   message_config(self.portfolio_percentages)
-    #    if self.portfolio_percentages > 0:
-    #    print("inside call message")
 
 if __name__ == '__main__':
 
