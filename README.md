@@ -1,5 +1,5 @@
 # crypto_notifications
-## Summary: Program that connects to Coingecko API to get crypto data and send notifications based on alert thresholds
+# Summary: Program that connects to Coingecko API to get crypto data and send notifications based on alert thresholds
 
 * Input: Text file containing cryptocurrency porfolito data for users with the coin symbol and the amount held.
   * Format: A list of lists. Each user is in a list. The first part of each list is the user information, the second part is the users portfolio information. (see the sample file portfolio.txt for more information)
