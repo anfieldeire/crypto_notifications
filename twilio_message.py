@@ -45,7 +45,7 @@ def send_message(returned_list):
         message = client.messages \
                         .create(
                          body='{}, \n {}'.format(greeting, message_body),
-                         from_='+12017785820 ',
+                         from_='+twilio_number ',
                          to='{}'.format(phone_number)
                      )
 
