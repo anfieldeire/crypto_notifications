@@ -1,4 +1,4 @@
-[[{'name': 'Gareth Hasson', 'phone': '8455363269'}, {'eth': 19.3, 'btc': 0.7, 'ltc': 7.87, 'link': 76.4}],
+[[{'name': 'John Barnes', 'phone': '81122534569'}, {'eth': 19.3, 'btc': 0.7, 'ltc': 7.87, 'link': 76.4}],
 
 [{'name': 'Curtis Jones', 'phone': '9173445466'}, {'btc': 0.2, 'eth': 2, 'xrp': 25.1, 'ltc': 5 }]
 
